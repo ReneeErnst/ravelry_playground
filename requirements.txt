@@ -1,0 +1,4 @@
+wheel
+requests-oauthlib
+pandas
+cauldron-notebook

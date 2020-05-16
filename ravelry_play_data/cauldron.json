@@ -1,0 +1,13 @@
+{
+  "author": "",
+  "library_folders": [
+    "libs"
+  ],
+  "name": "ravelry_play_data",
+  "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
+  "steps": [
+    "S01.py"
+  ],
+  "summary": "",
+  "title": "ravelry_play_data"
+}
