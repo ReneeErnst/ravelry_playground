@@ -6,6 +6,10 @@ To start this project I've built a few functions that can be used for pulling
 data from the Ravelry API. I'm trying to be cautious to not pull too much data 
 at once, putting a load on their systems. 
 
+# ToDo:
+Add info around setting up Pro account in Ravelry to get credentials needed 
+for using API
+
 ### Project 1: Sweaters - What makes a sweater pattern popular?
 As of today, Ravelry has 121,293 sweater patterns. I'd like to pull the data 
 for those patterns to learn what makes a pattern popular. 
@@ -31,6 +35,12 @@ Using the data available, I'd like to start by looking at:
   features?
 
 # General notes: 
+
+# Printing json:
+```python
+import json
+print(json.dumps(patterns[0], indent=2))
+```
 
 ## Could be of interest and do not require auth:
 GET /people/{username}/comments/list.json

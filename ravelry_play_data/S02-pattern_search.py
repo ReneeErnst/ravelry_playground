@@ -15,7 +15,7 @@ for page in pages:
         page=page,
         sort='name',
         pc='sweater',
-        availability=['online', 'free']
+        # availability=['online', 'free']
     )
 
     cd.display.table(df_pattern_data)

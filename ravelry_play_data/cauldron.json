@@ -8,7 +8,9 @@
   "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
   "steps": [
     "S01-attribute_data.py",
-    "S02-pattern_data.py"
+    "S02-pattern_search.py",
+    "S03-projects_from_patterns.py",
+    "S04-yarn_from_projects.py"
   ],
   "summary": "",
   "title": "ravelry_play_data"
