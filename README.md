@@ -1,20 +1,42 @@
-# ravelry_playground
+# Ravelry Playground
 Place to play with data from the Ravelry API
+
+## Intro
+To start this project I've built a few functions that can be used for pulling 
+data from the Ravelry API. I'm trying to be cautious to not pull too much data 
+at once, putting a load on their systems. 
+
+### Project 1: Sweaters - What makes a sweater pattern popular?
+As of today, Ravelry has 121,293 sweater patterns. I'd like to pull the data 
+for those patterns to learn what makes a pattern popular. 
+
+Ways we could define popularity:
+- Number of projects using the pattern
+    - Number of started, finished, frogged (started but ripped out)
+- Number of Queues the pattern is in
+- Number of Ratings of the pattern
+- Average Rating of the pattern
+- Number of comments on the pattern
+- Number of forum posts tagging the pattern
+
+In this case, I'm going to define popularity by the number of projects 
+using the given pattern. Other ways we could look at popularity is the average 
+rating of the pattern, number of comments on the pattern, number of forum 
+posts tagging the pattern
+
+Using the data available, I'd like to start by looking at:
+- What features are most important to determining the number of projects 
+  using the pattern?
+- Can well I predict the number of projects a pattern will have based on those 
+  features?
+
+# General notes: 
 
 ## Could be of interest and do not require auth:
 GET /people/{username}/comments/list.json
 
 GET /people/{username}/fiber/{id}/comments.json
 Retrieve a stashed fiber's comments
-
-GET /fiber_attribute_groups/list.json
-Retrieve list of fiber attribute groups
-
-GET /fiber_attributes/list.json
-Retrieve list of the current fiber attributes
-
-GET /fiber_categories/list.json
-List the current fiber categories
 
 GET /forum_posts/unread.json
 Get list of unread posts, across all forums

@@ -1,4 +1,5 @@
 wheel
 requests-oauthlib
 pandas
+numpy
 cauldron-notebook

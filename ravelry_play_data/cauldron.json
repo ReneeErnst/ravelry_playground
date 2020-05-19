@@ -2,7 +2,7 @@
   "author": "",
   "id": "ravelry_play_data",
   "library_folders": [
-    "libs"
+    ".."
   ],
   "name": "ravelry_play_data",
   "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
