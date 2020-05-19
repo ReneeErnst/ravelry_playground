@@ -3,7 +3,16 @@ import requests
 import pandas as pd
 
 
-def ravelry_get_data(user, pwd, path, ids=None, data=None):
+def serialized_list(source: list, delimiter: str) -> str:
+    return delimiter.join([str(s) for s in source])
+
+
+def ravelry_get_data(
+        user,
+        pwd,
+        path,
+        data=None
+):
     """
     Get response with basic authentication
     :param user: username for API authentication
@@ -13,20 +22,13 @@ def ravelry_get_data(user, pwd, path, ids=None, data=None):
     :param data: additional parameters used when pulling data
     :return: request result when successful, error w/status code when not
     """
-    if not ids:
-        url = f'https://api.ravelry.com/{path}.json'
-        result = requests.get(
-            url,
-            data=data,
-            auth=requests.auth.HTTPBasicAuth(user, pwd)
-        )
-    else:
-        url = f'https://api.ravelry.com/{path}.json?ids={ids}'
-        result = requests.get(
-            url,
-            auth=requests.auth.HTTPBasicAuth(user, pwd)
-        )
-
+    # if not ids:
+    url = f'https://api.ravelry.com/{path}.json'
+    result = requests.get(
+        url,
+        data=data,
+        auth=requests.auth.HTTPBasicAuth(user, pwd)
+    )
     if result.status_code != 200:
         raise RuntimeError(f'Error status: {result.status_code}')
     else:

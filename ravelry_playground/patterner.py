@@ -34,7 +34,7 @@ def pattern_search(
 
     for key, value in kwargs.items():
         if isinstance(value, list):
-            value = '|'.join(value)
+            value = ravelry_playground.serialized_list(value, '|')
         query_data.update({key: value})
 
     print('Query: ', query_data)
@@ -89,15 +89,12 @@ def pattern_search(
     return df_patterns, df_pattern_sources
 
 
-def get_pattern_data(user: str, pwd: str, ids: list):
-    pattern_ids = ' '.join(map(str, ids))
-    pattern_ids = pattern_ids.replace(' ', '+')
-
+def get_pattern_data(user: str, pwd: str, data: dict):
     pattern_details = ravelry_playground.ravelry_get_data(
         user,
         pwd,
         'patterns',
-        ids=pattern_ids
+        data=data
     ).get('patterns')
 
     pattern_data = []
@@ -181,6 +178,12 @@ def get_pattern_data(user: str, pwd: str, ids: list):
     return results
 
 
-def get_pattern_project_data():
-    test = '/patterns/{id}/projects.json'
-    print('test')
+def get_pattern_project_data(user: str, pwd: str, pattern_id: int, data: dict):
+    pattern_project_info = ravelry_playground.ravelry_get_data(
+        user,
+        pwd,
+        f'patterns/{pattern_id}/projects',
+        data=data
+    )
+    import json
+    print(json.dumps(pattern_project_info, indent=2))
