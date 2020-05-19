@@ -6,7 +6,7 @@ user = cd.shared.user
 pwd = cd.shared.pwd
 
 # ToDo: Get IDs first
-ids = []
+ids = [26, 27]
 
 # Get yarns data
 df_yarn_info, df_yarn_fiber, df_yarn_photos = ravelry_playground.get_yarns(

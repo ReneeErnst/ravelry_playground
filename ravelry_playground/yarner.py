@@ -5,15 +5,14 @@ import ravelry_playground
 
 
 def get_yarns(user: str, pwd: str, ids: list):
-    yarn_ids = ' '
-    yarn_ids = yarn_ids.join(ids)
+    yarn_ids = ' '.join(map(str, ids))
     yarn_ids = yarn_ids.replace(' ', '+')
 
     yarns = ravelry_playground.ravelry_get_data(
         user,
         pwd,
         'yarns',
-        data={'ids': yarn_ids}
+        ids=yarn_ids
     ).get('yarns')
 
     yarn_info = []

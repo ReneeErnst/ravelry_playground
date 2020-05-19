@@ -11,7 +11,6 @@ for page in pages:
     df_pattern_data, df_pattern_sources = ravelry_playground.pattern_search(
         user,
         pwd,
-        '',
         page=page,
         sort='name',
         pc='sweater',

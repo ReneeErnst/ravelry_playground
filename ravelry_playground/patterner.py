@@ -6,23 +6,25 @@ import ravelry_playground
 
 
 def pattern_search(
-        user,
-        pwd,
-        query,
-        page=1,
-        page_size=100,
+        user: str,
+        pwd: str,
+        query: str = '',
+        page: int = 1,
+        page_size: int = 100,
         **kwargs
 ):
     """
     Search and return pattern data. Returns data on the patterns themselves as
     well as pattern source data
-    :param user:
-    :param pwd:
-    :param query:
-    :param page:
-    :param page_size:
-    :param kwargs:
-    :return:
+    :param user: api user name credential
+    :param pwd: api password
+    :param query: String with search term if wanted - use like search box on
+    site in combo with any filters passed in via kwargs
+    :param page: page to pull from search data
+    :param page_size: Size of records per page
+    :param kwargs: Any filters to add to results - can use any from ravelry
+    site
+    :return: 2 DataFrames with the pattern data and pattern source data
     """
 
     query_data = {}
@@ -85,3 +87,100 @@ def pattern_search(
     print('Length Pattern Sources Data: ', len(df_pattern_sources))
 
     return df_patterns, df_pattern_sources
+
+
+def get_pattern_data(user: str, pwd: str, ids: list):
+    pattern_ids = ' '.join(map(str, ids))
+    pattern_ids = pattern_ids.replace(' ', '+')
+
+    pattern_details = ravelry_playground.ravelry_get_data(
+        user,
+        pwd,
+        'patterns',
+        ids=pattern_ids
+    ).get('patterns')
+
+    pattern_data = []
+    pattern_needles = []
+    pattern_yarn = []
+    pattern_categories = []
+    pattern_attributes = []
+    pattern_photos = []
+
+    for pattern_id, data in pattern_details.items():
+        pattern = pattern_details.get(pattern_id)
+
+        df_pattern = pd.json_normalize(pattern)
+        df_pattern = df_pattern.rename(columns={'id': 'pattern_id'})
+        df_pattern = df_pattern.drop([
+            'pattern_needle_sizes',
+            'packs',
+            'printings',
+            'pattern_categories',
+            'pattern_attributes',
+            'photos',
+            'pattern_author.users'
+        ], axis=1)
+
+        pattern_data.append(df_pattern)
+
+        # Needled info for pattern
+        df_pattern_needles = ravelry_playground.basic_json_normalize(
+            pattern,
+            'pattern_needle_sizes',
+            pattern_id,
+            'pattern_needle_id'
+        )
+        pattern_needles.append(df_pattern_needles)
+
+        # Yarn info for pattern
+        df_pattern_yarn = ravelry_playground.basic_json_normalize(
+            pattern,
+            'packs',
+            pattern_id,
+            'pattern_yarn_id'
+        )
+        pattern_yarn.append(df_pattern_yarn)
+
+        # Category mapping for pattern
+        df_pattern_categories = ravelry_playground.basic_json_normalize(
+            pattern,
+            'pattern_categories',
+            pattern_id,
+            'top_category_id'
+        )
+        pattern_categories.append(df_pattern_categories)
+
+        # Pattern attributes
+        df_pattern_attributes = ravelry_playground.basic_json_normalize(
+            pattern,
+            'pattern_attributes',
+            pattern_id,
+            'pattern_attribute_id'
+        )
+        pattern_attributes.append(df_pattern_attributes)
+
+        # Photos data
+        df_photos = ravelry_playground.basic_json_normalize(
+            pattern,
+            'photos',
+            pattern_id,
+            'pattern_photo_id'
+        )
+        pattern_photos.append(df_photos)
+
+    results = {
+        'df_pattern_data': pd.concat(pattern_data),
+        'df_pattern_needles': pd.concat(pattern_needles),
+        'df_pattern_yarn': pd.concat(pattern_yarn),
+        'df_pattern_categories': pd.concat(pattern_categories),
+        'df_pattern_attributes': pd.concat(pattern_attributes),
+        'df_pattern_photos': pd.concat(pattern_photos),
+    }
+
+    return results
+
+
+def get_pattern_project_data():
+    test = '/patterns/{id}/projects.json'
+    print('test')
