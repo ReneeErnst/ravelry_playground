@@ -131,6 +131,7 @@ dmypy.json
 # GCP info
 project.txt
 bucket.txt
+dataset.txt
 sub_name.txt
 topic.txt
 

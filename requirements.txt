@@ -1,5 +1,6 @@
 wheel
 pandas
+pandas_gbq
 numpy
 cauldron-notebook
 h5py

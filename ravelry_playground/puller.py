@@ -1,10 +1,29 @@
 """Pull data from Ravelry"""
-import requests
 import pandas as pd
+import requests
 
 
 def serialized_list(source: list, delimiter: str) -> str:
+    """
+    Join items in list based on delimiter needed by Ravelry (e.g., + for ids)
+    :param source: list of items to join
+    :param delimiter: what to join them with
+    :return: string with items joined with delimiter
+    """
     return delimiter.join([str(s) for s in source])
+
+
+def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace '.' in column names with '_'
+    :param df: Dataframe with columns to check
+    :return: Dataframe with clean columns
+    """
+    for column in list(df):
+        if '.' in column:
+            clean_column = column.replace('.', '_')
+            df = df.rename(columns={column: clean_column})
+    return df
 
 
 def ravelry_get_data(

@@ -4,6 +4,9 @@ from ravelry_playground.yarner import get_yarns  # noqa
 from ravelry_playground.puller import ravelry_get_data  # noqa
 from ravelry_playground.puller import basic_json_normalize  # noqa
 from ravelry_playground.puller import serialized_list
+from ravelry_playground.puller import clean_column_names
 from ravelry_playground.patterner import pattern_search  # noqa
 from ravelry_playground.patterner import get_pattern_data  # noqa
 from ravelry_playground.patterner import get_pattern_project_data  # noqa
+from ravelry_playground.patterner import get_num_pattern_search_results  # noqa
+from ravelry_playground.saver import save_data  # noqa

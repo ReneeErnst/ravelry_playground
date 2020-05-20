@@ -1,4 +1,6 @@
 """Functions for getting data from Ravelry"""
+import re
+
 import pandas as pd
 
 from ravelry_playground import puller
@@ -48,6 +50,11 @@ def get_yarn_attributes(auth_info: dict) -> pd.DataFrame:
         yarn_attribute_dfs.append(df_attribute)
 
     df_yarn_attributes = pd.concat(yarn_attribute_dfs)
+
+    # Replace any special characters in the description field
+    df_yarn_attributes['description'] = df_yarn_attributes[
+        'description'
+    ].apply(lambda x: re.sub('[^A-Za-z0-9 ]+', ' ', x))
 
     df_yarn_attributes = df_yarn_attributes[[
         'yarn_attribute_group_id',

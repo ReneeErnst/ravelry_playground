@@ -256,7 +256,7 @@ import json
 print(json.dumps(patterns[0], indent=2))
 ```
 
-### GCP Authentication
+### GCP Authentication when running from local machine rather than in GCP
 If saving data out to GCP like is being done in this repo, you will first 
 need to authenticate to GCP from your computer if you haven't already. If you 
 are running your code from a container, you will need to do this within 
@@ -283,7 +283,7 @@ that running container and auth to GCP:
         
         `gcloud config set project <project_id>`
         
-    - Set default compute region:
+    - Set default compute region (I'm using us-central1):
     
         `gcloud config set compute/region <compute_region>`
 
