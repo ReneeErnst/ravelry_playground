@@ -198,129 +198,7 @@ Using the data available, I'd like to start by looking at:
 - Can well I predict the number of projects a pattern will have based on those 
   features?
 
-# General notes: 
-
-# Printing json:
-```python
-import json
-print(json.dumps(patterns[0], indent=2))
-```
-
-## Could be of interest and do not require auth:
-GET /people/{username}/comments/list.json
-
-GET /people/{username}/fiber/{id}/comments.json
-Retrieve a stashed fiber's comments
-
-GET /forum_posts/unread.json
-Get list of unread posts, across all forums
-
-GET /groups/search.json
-Search the group directory
-
-GET /pattern_attributes/groups.json
-List the current pattern attributes
-
-GET /pattern_categories/list.json
-List the current pattern categories
-
-GET /pattern_sources/search.json
-Search pattern source database
-
-GET /pattern_sources/{id}.json
-Get pattern source details
-
-GET /patterns/{id}/comments.json
-Retrieve a pattern's comments
-
-GET /patterns.json
-Get pattern details for multiple patterns
-
-GET /patterns/{id}/projects.json
-Retrieve the list of projects that are linked to this pattern
-
-GET /patterns/search.json
-Search pattern database
-
-GET /patterns/{id}.json
-Get pattern details
-
-GET /projects/{username}/{id}/comments.json
-Retrieve a project's comments
-
-GET /projects/search.json
-Search the project database
-
-GET /shops/search.json
-Search yarn shop database
-
-GET /shops/{id}.json
-Get shop details
-
-GET /people/{username}/stash/{id}/comments.json
-Retrieve a stashed yarn's comments
-
-GET /stash/search.json
-Search the project database
-
-GET /stores/list.json
-List the current user's pattern stores
-
-GET /stores/#{store_id}/products.json
-List the products in a user's stores
-
-GET /yarn_companies/search.json
-Search the yarn company directory
-
-GET /yarns/search.json
-Search yarn database
-
-GET /yarns/{id}.json
-Get yarn details
-
-GET /yarns.json
-Get yarn details for multiple yarns
-
-
-
-## requires auth:
-GET /designers/{id}.json
-Get designer details
-
-GET /people/{username}/favorites/list.json
-Get favorite list
-
-GET /forums/{forum_id}/topics.json
-Get topic list for a specific forum, personalize for the authenticated user
-
-GET /people/{id}.json
-Get user profile
-
-POST /projects/crafts.json
-Get list of crafts that are valid for use within projects
-
-GET /projects/{username}/list.json
-Get project list
-
-GET /projects/{username}/{id}.json
-Get project detail
-
-GET /people/{username}/queue/list.json
-Get queued project list
-
-GET /people/{username}/queue/order.json
-Get queue ordering (list of all names, ids, and positions)
-
-GET /people/{username}/queue/{id}.json
-Get queued project detail
-
-GET /people/{username}/stash/list.json
-Get stash list
-
-GET /people/{username}/stash/{id}.json
-Get stash list
-
-# Run Cauldron in container on PC
+## Run Cauldron in container on PC
 Build docker image included in this repo, adjusting packages in 
 requirements.txt as needed. 
 
@@ -368,4 +246,45 @@ container with command line control:
 
 `python start_container.py --container command_line`
 
-# Connect Cauldron running on container on PC to remote container for execution
+## Connect Cauldron container on PC to remote container for execution
+
+# General notes/tips: 
+
+### Printing json:
+```
+import json
+print(json.dumps(patterns[0], indent=2))
+```
+
+### GCP Authentication
+If saving data out to GCP like is being done in this repo, you will first 
+need to authenticate to GCP from your computer if you haven't already. If you 
+are running your code from a container, you will need to do this within 
+your container. The following steps assume you are doing this within a 
+container, but can be used for auth generally. 
+
+If you started the container to immediately run cauldron, you need to exec into 
+that running container and auth to GCP:
+- In a new terminal window use this command to get the name of your running 
+  container:
+  
+  `docker container ls`
+  
+- Exec into that container for running commands:
+
+  `docker exec -it <container_name> bash`
+
+- Once exec'ed into the container, follow these steps: 
+    - Authenticate to GCP: 
+    
+        `gcloud auth login`
+
+    - Set default project:
+        
+        `gcloud config set project <project_id>`
+        
+    - Set default compute region:
+    
+        `gcloud config set compute/region <compute_region>`
+
+You should now be set up to interact with GCP from your running container!
