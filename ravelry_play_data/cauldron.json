@@ -7,11 +7,12 @@
   "name": "ravelry_play_data",
   "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
   "steps": [
-    "S01-attribute_data.py",
-    "S02-pattern_search.py",
-    "S03-pattern_details.py",
-    "S04-pattern_projects_details.py",
-    "S05-yarn_from_projects.py"
+    "S01-setup.py",
+    "S02-attribute_data.py",
+    "S03-pattern_search.py",
+    "S04-pattern_details.py",
+    "S05-pattern_projects_details.py",
+    "S06-yarn_from_projects.py"
   ],
   "summary": "",
   "title": "ravelry_play_data"

@@ -1,29 +1,27 @@
-import json
-
 import pandas as pd
 
 import ravelry_playground
 
 
 def pattern_search(
-        token: str,
+        auth_info: dict,
         query: str = '',
         page: int = 1,
         page_size: int = 100,
         **kwargs
-):
+) -> dict:
     """
     Search and return pattern data. Returns data on the patterns themselves as
     well as pattern source data
-    :param user: api user name credential
-    :param pwd: api password
+    :param auth_info: auth for ravelry API
     :param query: String with search term if wanted - use like search box on
     site in combo with any filters passed in via kwargs
     :param page: page to pull from search data
     :param page_size: Size of records per page
     :param kwargs: Any filters to add to results - can use any from ravelry
     site
-    :return: 2 DataFrames with the pattern data and pattern source data
+    :return: dict with 2 DataFrames containing the pattern data and
+    pattern source data
     """
 
     query_data = {}
@@ -38,17 +36,12 @@ def pattern_search(
 
     print('Query: ', query_data)
     result = ravelry_playground.ravelry_get_data(
-        token,
+        auth_info,
         'patterns/search',
         data=query_data
     )
 
     patterns = result.get('patterns')
-
-    # If pulling data from page 1 of search, also include sample data in output
-    if page == 1:
-        print('Sample Pattern Data: ')
-        print(json.dumps(patterns[0], indent=2))
 
     paginator = result.get('paginator')
     print('Page: ', paginator.get('page'))
@@ -67,8 +60,6 @@ def pattern_search(
         'pattern_author.users'
     ], axis=1)
 
-    print('Length Patterns Data: ', len(df_patterns))
-
     # Get pattern sources data
     pattern_sources = []
     for i in patterns:
@@ -82,14 +73,25 @@ def pattern_search(
         pattern_sources.append(df_source)
 
     df_pattern_sources = pd.concat(pattern_sources)
-    print('Length Pattern Sources Data: ', len(df_pattern_sources))
 
-    return df_patterns, df_pattern_sources
+    results = {
+        'patterns': df_patterns,
+        'pattern_sources': df_pattern_sources
+    }
+
+    return results
 
 
-def get_pattern_data(token: str, data: dict):
+def get_pattern_data(auth_info: dict, data: dict) -> dict:
+    """
+    Pull pattern related data for specific pattern ids included in data input
+    :param auth_info: auth for ravelry API
+    :param data: dict with data to include in Ravelry request, in this case
+    pattern ids
+    :return: dict with pandas dataframes for various pattern related info
+    """
     pattern_details = ravelry_playground.ravelry_get_data(
-        token,
+        auth_info,
         'patterns',
         data=data
     ).get('patterns')
@@ -175,9 +177,16 @@ def get_pattern_data(token: str, data: dict):
     return results
 
 
-def get_pattern_project_data(token: str, pattern_id: int, data: dict):
+def get_pattern_project_data(auth_info: dict, pattern_id: int, data: dict):
+    """
+    Project related data for given pattern
+    :param auth_info: auth for ravelry API
+    :param pattern_id: pattern ID to get project data for
+    :param data:
+    :return:
+    """
     pattern_project_info = ravelry_playground.ravelry_get_data(
-        token,
+        auth_info,
         f'patterns/{pattern_id}/projects',
         data=data
     )

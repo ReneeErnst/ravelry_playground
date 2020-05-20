@@ -4,9 +4,14 @@ import pandas as pd
 from ravelry_playground import puller
 
 
-def get_color_attributes(token):
+def get_color_attributes(auth_info: dict) -> pd.DataFrame:
+    """
+    Get possible color attributes data
+    :param auth_info: auth for ravelry API
+    :return: pd.DataFrame with color attributes data
+    """
     colors = puller.ravelry_get_data(
-        token,
+        auth_info,
         'color_families'
     )
 
@@ -20,9 +25,14 @@ def get_color_attributes(token):
     return df_color_attributes
 
 
-def get_yarn_attributes(token):
+def get_yarn_attributes(auth_info: dict) -> pd.DataFrame:
+    """
+    Get possible yarn attributes data
+    :param auth_info: auth for ravelry API
+    :return: pd.DataFrame with yarn attributes data
+    """
     yarn_attributes = puller.ravelry_get_data(
-        token,
+        auth_info,
         '/yarn_attributes/groups'
     ).get('yarn_attribute_groups')
 
@@ -50,28 +60,3 @@ def get_yarn_attributes(token):
     ]]
 
     return df_yarn_attributes
-
-
-# def get_pattern_search_data():
-#     # ToDo: Add function that can search patterns
-#     print('')
-#
-#
-# def get_user_data(name, username, password):
-#     result = ravelry_get('people', name, username, password)
-#     return result
-#
-#
-# def get_yarn_data():
-#     # ToDo: Get data on different yarns in Ravelry
-#     print('')
-#
-#
-# def get_user_stash(user):
-#     # ToDo: Get data on user's stash
-#     print('')
-#
-#
-# def get_user_lib(user):
-#     # ToDo: Get data on what patterns user has
-#     print('')

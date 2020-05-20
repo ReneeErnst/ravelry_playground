@@ -4,9 +4,16 @@ import pandas as pd
 import ravelry_playground
 
 
-def get_yarns(token: str, data: dict):
+def get_yarns(auth_info: dict, data: dict) -> dict:
+    """
+    Get yarn related info for specific set of yarn IDs indicated in data input
+    :param auth_info: auth for ravelry API
+    :param data: data to use for api pull, in this case yarn IDs
+    :return: Dict containing 3 dataframes with info on the yarn, fiber content
+    for the yarn, and yarn photo info
+    """
     yarns = ravelry_playground.ravelry_get_data(
-        token,
+        auth_info,
         'yarns',
         data=data
     ).get('yarns')
@@ -44,7 +51,13 @@ def get_yarns(token: str, data: dict):
         yarn_photos.append(df_photos)
 
     df_yarn_info = pd.concat(yarn_info)
-    df_fiber_info = pd.concat(yarn_fiber_content)
-    df_photo_info = pd.concat(yarn_photos)
+    df_yarn_fiber_info = pd.concat(yarn_fiber_content)
+    df_yarn_photo_info = pd.concat(yarn_photos)
 
-    return df_yarn_info, df_fiber_info, df_photo_info
+    yarn_data_output = {
+        'yarn_info': df_yarn_info,
+        'yarn_fiber_info': df_yarn_fiber_info,
+        'yarn_photo_info': df_yarn_photo_info
+    }
+
+    return yarn_data_output
