@@ -287,4 +287,5 @@ that running container and auth to GCP:
     
         `gcloud config set compute/region <compute_region>`
 
-You should now be set up to interact with GCP from your running container!
+You should now be set up to interact with GCP from your running container! 
+You can now exit by simply entering 'exit'.
