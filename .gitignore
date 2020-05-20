@@ -128,11 +128,17 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# GCP info
 project.txt
 bucket.txt
+dataset.txt
 sub_name.txt
 topic.txt
 
+# Ravelry Auth Info
 user.txt
 pwd.txt
 token.txt
+
+# Place to save data to if saving results locally
+output_data/

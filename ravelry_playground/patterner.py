@@ -3,6 +3,33 @@ import pandas as pd
 import ravelry_playground
 
 
+def get_num_pattern_search_results(
+        auth_info: dict,
+        query: str = '',
+        page_size: int = 100,
+        **kwargs
+) -> dict:
+    query_data = {}
+    query_data.update({'query': query})
+    query_data.update({'page': 1})
+    query_data.update({'page_size': page_size})
+
+    # Add any other passed in arguments for the search
+    for key, value in kwargs.items():
+        if isinstance(value, list):
+            value = ravelry_playground.serialized_list(value, '|')
+        query_data.update({key: value})
+
+    result = ravelry_playground.ravelry_get_data(
+        auth_info,
+        'patterns/search',
+        data=query_data
+    )
+
+    paginator = result.get('paginator')
+    return paginator
+
+
 def pattern_search(
         auth_info: dict,
         query: str = '',
@@ -29,12 +56,12 @@ def pattern_search(
     query_data.update({'page': page})
     query_data.update({'page_size': page_size})
 
+    # Add any other passed in arguments for the search
     for key, value in kwargs.items():
         if isinstance(value, list):
             value = ravelry_playground.serialized_list(value, '|')
         query_data.update({key: value})
 
-    print('Query: ', query_data)
     result = ravelry_playground.ravelry_get_data(
         auth_info,
         'patterns/search',
@@ -42,11 +69,6 @@ def pattern_search(
     )
 
     patterns = result.get('patterns')
-
-    paginator = result.get('paginator')
-    print('Page: ', paginator.get('page'))
-    print('Page Size: ', paginator.get('page_size'))
-    print('Results: ', paginator.get('results'))
 
     df_patterns = pd.json_normalize(
         data=patterns
@@ -60,7 +82,12 @@ def pattern_search(
         'pattern_author.users'
     ], axis=1)
 
+    # Rename columns in data to match needs for BigQuery (remove '.' character)
+    df_patterns = ravelry_playground.clean_column_names(df_patterns)
+
     # Get pattern sources data
+    # ToDo: Consider saving all the data pulled from Ravelry before doing
+    #  transformations. It may consume fewer resources.
     pattern_sources = []
     for i in patterns:
         pattern_id = i.get('id')

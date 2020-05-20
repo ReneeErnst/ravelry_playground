@@ -1,5 +1,9 @@
 wheel
-requests-oauthlib
 pandas
+pandas_gbq
 numpy
 cauldron-notebook
+h5py
+tables
+google-cloud-bigquery
+google-cloud-storage
