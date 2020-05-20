@@ -6,8 +6,7 @@ import ravelry_playground
 
 
 def pattern_search(
-        user: str,
-        pwd: str,
+        token: str,
         query: str = '',
         page: int = 1,
         page_size: int = 100,
@@ -39,8 +38,7 @@ def pattern_search(
 
     print('Query: ', query_data)
     result = ravelry_playground.ravelry_get_data(
-        user,
-        pwd,
+        token,
         'patterns/search',
         data=query_data
     )
@@ -89,10 +87,9 @@ def pattern_search(
     return df_patterns, df_pattern_sources
 
 
-def get_pattern_data(user: str, pwd: str, data: dict):
+def get_pattern_data(token: str, data: dict):
     pattern_details = ravelry_playground.ravelry_get_data(
-        user,
-        pwd,
+        token,
         'patterns',
         data=data
     ).get('patterns')
@@ -178,10 +175,9 @@ def get_pattern_data(user: str, pwd: str, data: dict):
     return results
 
 
-def get_pattern_project_data(user: str, pwd: str, pattern_id: int, data: dict):
+def get_pattern_project_data(token: str, pattern_id: int, data: dict):
     pattern_project_info = ravelry_playground.ravelry_get_data(
-        user,
-        pwd,
+        token,
         f'patterns/{pattern_id}/projects',
         data=data
     )

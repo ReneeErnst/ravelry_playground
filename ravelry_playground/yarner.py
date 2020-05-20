@@ -4,22 +4,18 @@ import pandas as pd
 import ravelry_playground
 
 
-def get_yarns(user: str, pwd: str, ids: list):
-    yarn_ids = ' '.join(map(str, ids))
-    yarn_ids = yarn_ids.replace(' ', '+')
-
+def get_yarns(token: str, data: dict):
     yarns = ravelry_playground.ravelry_get_data(
-        user,
-        pwd,
+        token,
         'yarns',
-        ids=yarn_ids
+        data=data
     ).get('yarns')
 
     yarn_info = []
     yarn_fiber_content = []
     yarn_photos = []
 
-    for yarn_id, data in yarns.items():
+    for yarn_id, yarn_data in yarns.items():
         yarn = yarns.get(yarn_id)
 
         df_yarn = pd.json_normalize(yarn)

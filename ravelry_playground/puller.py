@@ -8,26 +8,26 @@ def serialized_list(source: list, delimiter: str) -> str:
 
 
 def ravelry_get_data(
-        user,
-        pwd,
+        token,
         path,
         data=None
 ):
     """
     Get response with basic authentication
-    :param user: username for API authentication
-    :param pwd: password for API authentication
+    :param token: API Auth info
     :param path: path to pull data from (e.g., patterns)
-    :param ids: ids used when searching for specific items
     :param data: additional parameters used when pulling data
     :return: request result when successful, error w/status code when not
     """
-    # if not ids:
     url = f'https://api.ravelry.com/{path}.json'
+
     result = requests.get(
         url,
         data=data,
-        auth=requests.auth.HTTPBasicAuth(user, pwd)
+        # auth=requests.auth.HTTPBasicAuth(user, pwd)
+        headers={
+            'Authorization': f'Bearer {token}'
+        }
     )
     if result.status_code != 200:
         raise RuntimeError(f'Error status: {result.status_code}')

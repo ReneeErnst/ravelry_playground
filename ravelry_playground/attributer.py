@@ -4,10 +4,9 @@ import pandas as pd
 from ravelry_playground import puller
 
 
-def get_color_attributes(user, pwd):
+def get_color_attributes(token):
     colors = puller.ravelry_get_data(
-        user,
-        pwd,
+        token,
         'color_families'
     )
 
@@ -21,10 +20,9 @@ def get_color_attributes(user, pwd):
     return df_color_attributes
 
 
-def get_yarn_attributes(user, pwd):
+def get_yarn_attributes(token):
     yarn_attributes = puller.ravelry_get_data(
-        user,
-        pwd,
+        token,
         '/yarn_attributes/groups'
     ).get('yarn_attribute_groups')
 

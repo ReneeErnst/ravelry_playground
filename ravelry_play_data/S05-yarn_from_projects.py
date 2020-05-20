@@ -2,15 +2,17 @@ import cauldron as cd
 
 import ravelry_playground
 
-user = cd.shared.user
-pwd = cd.shared.pwd
+token = cd.shared.token
 
 # ToDo: Get IDs first
 ids = [26, 27]
+data = {
+    'ids': ravelry_playground.serialized_list(ids, ' ')
+}
 
 # Get yarns data
 df_yarn_info, df_yarn_fiber, df_yarn_photos = ravelry_playground.get_yarns(
-    user, pwd, ids)
+    token, data)
 
 cd.display.header('Yarn Info Data: ', level=2)
 cd.display.table(df_yarn_info)
