@@ -123,5 +123,6 @@ data_to_save = {
     'sweater_pattern_sources': df_patterns_source_data
 }
 
-# Save data out - save_info includes all needed info on where/how to save
-ravelry_playground.save_data(data_to_save, save_info)
+for table_name, df in data_to_save.items():
+    # Save data out - save_info includes all needed info on where/how to save
+    ravelry_playground.save_data(df, table_name, save_info)

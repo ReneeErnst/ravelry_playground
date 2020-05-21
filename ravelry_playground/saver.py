@@ -86,30 +86,31 @@ def _save_local(df, save_info: dict, save_name: str):
     return True
 
 
-def save_data(data_to_save: dict, save_info: dict):
+def save_data(df_save: pd.DataFrame, table_name: str, save_info: dict):
     """
     For each item in data to save, save data based on info in save_info
-    :param data_to_save: dict of dataframes to save to gcp or locally
+    :param df_save: dataframe to save to gcp or locally
+    :param table_name: Name of table or file to save to
     :param save_info: Dict with info on where to save data to, including
     location locally or in GCP
     :return: True if function completes w/o error
     """
-    for data_name, data in data_to_save.items():
-        if save_info.get('save_loc') == 'gcp':
-            _save_gcp(
-                data,
-                save_info,
-                data_name
-            )
-            print(f'{data_name} saved to GCP!')
-        elif save_info.get('save_loc') == 'local':
-            _save_local(
-                data,
-                save_info,
-                data_name
-            )
-            print(f'{data_name} saved locally!')
-        else:
-            print(f'No save location info included - not saving {data_name}')
+
+    if save_info.get('save_loc') == 'gcp':
+        _save_gcp(
+            df_save,
+            save_info,
+            table_name
+        )
+        print(f'{table_name} saved to GCP!')
+    elif save_info.get('save_loc') == 'local':
+        _save_local(
+            df_save,
+            save_info,
+            table_name
+        )
+        print(f'{table_name} saved locally!')
+    else:
+        print(f'No save location info included - not saving {table_name}')
 
     return True

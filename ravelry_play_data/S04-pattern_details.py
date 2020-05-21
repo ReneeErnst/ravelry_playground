@@ -1,4 +1,5 @@
 import cauldron as cd
+import pandas as pd
 from google.cloud import bigquery
 
 import ravelry_playground
@@ -30,12 +31,16 @@ nested_data_types = {
     'packs': [],
     'pattern_categories': [],
     'pattern_attributes': [],
-    'photos': [],
+    'photos': []
 }
 
-chunk_size = 2
-# for patterns in range(0, len(pattern_ids), chunk_size):
-for patterns in range(0, 10, chunk_size):
+# ToDo: Format free text fields describing patterns
+# ToDo: Test different Chunk Sizes
+chunk_tracker = 0  # Track what chunk we are on
+chunk_size = 500  # How many records to pull at once
+num_chunks = round(len(pattern_ids) / chunk_size)
+cd.display.text(f'Number of Chunks to Pull: {num_chunks}')
+for patterns in range(0, len(pattern_ids), chunk_size):
     chunk = pattern_ids[patterns: patterns + chunk_size]
 
     # Pass in chunk of pattern ids to get pattern details for those patterns
@@ -53,11 +58,34 @@ for patterns in range(0, 10, chunk_size):
         )
         output += nested_data
 
+    chunk_tracker += 1
+    # Display done with page every 10 pages
+    if chunk_tracker % 10 == 0:
+        print(f'Done with chunk {chunk_tracker}')
+
 df_pattern_details_data = ravelry_playground.clean_pattern_details_data(
     pattern_details_data
 )
-cd.display.table(df_pattern_details_data)
 
-# ToDo: Create the Dataframes from nested_data_types
+cd.display.text('Sample of pattern details data: ')
+cd.display.table(df_pattern_details_data.head())
 
-# ToDo: Save to GCP BigQuery
+ravelry_playground.save_data(df, 'sweater_pattern_details', save_info)
+cd.display.header('Pattern Details Data Saved to GCP!')
+
+for nested_data_type, output in nested_data_types.items():
+    df = pd.json_normalize(
+        data=output
+    )
+    # Rename columns in data to match needs for BigQuery (remove '.' character)
+    df = ravelry_playground.clean_column_names(df)
+
+    table_name = nested_data_type.replace('pattern_', '')
+    table_name = f'sweater_pattern_details_{table_name}'
+
+    cd.display.text(f'Sample of {table_name} data')
+    cd.display.table(df.head())
+
+    ravelry_playground.save_data(df, table_name, save_info)
+
+cd.display.header('Nested Pattern Details Data Saved to GCP!')

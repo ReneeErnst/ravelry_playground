@@ -49,7 +49,8 @@ def serialized_list(source: list, delimiter: str) -> str:
 
 def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Replace '.' in column names with '_'
+    Replace '.' in column names with '_', then remove any duplicate column
+    names
     :param df: Dataframe with columns to check
     :return: Dataframe with clean columns
     """
@@ -57,6 +58,9 @@ def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
         if '.' in column:
             clean_column = column.replace('.', '_')
             df = df.rename(columns={column: clean_column})
+
+    # remove any duplicate column names
+    df = df.loc[:, ~df.columns.duplicated()]
     return df
 
 
