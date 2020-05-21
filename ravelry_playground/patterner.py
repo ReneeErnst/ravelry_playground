@@ -68,10 +68,13 @@ def pattern_search(
         data=query_data
     )
 
-    patterns = result.get('patterns')
+    return result.get('patterns')
+
+
+def clean_pattern_search_results(pattern_results):
 
     df_patterns = pd.json_normalize(
-        data=patterns
+        data=pattern_results
     )
 
     df_patterns = df_patterns.rename(columns={'id': 'pattern_id'})
@@ -85,31 +88,27 @@ def pattern_search(
     # Rename columns in data to match needs for BigQuery (remove '.' character)
     df_patterns = ravelry_playground.clean_column_names(df_patterns)
 
-    # Get pattern sources data
-    # ToDo: Consider saving all the data pulled from Ravelry before doing
-    #  transformations. It may consume fewer resources.
-    pattern_sources = []
-    for i in patterns:
-        pattern_id = i.get('id')
-        sources = i.get('pattern_sources')
-        df_source = pd.json_normalize(
-            data=sources
-        )
-        df_source['pattern_id'] = pattern_id
-
-        pattern_sources.append(df_source)
-
-    df_pattern_sources = pd.concat(pattern_sources)
-
-    results = {
-        'patterns': df_patterns,
-        'pattern_sources': df_pattern_sources
-    }
-
-    return results
+    return df_patterns
 
 
-def get_pattern_data(auth_info: dict, data: dict) -> dict:
+def create_pattern_source_data(pattern_results: list):
+    source_data_results = []
+    for pattern in pattern_results:
+        pattern_id = pattern.get('id')
+        source_data = pattern.get('pattern_sources')
+
+        # Add pattern_id to source data
+        for source in source_data:
+            source.update({'pattern_id': pattern_id})
+            source_data_results.append(source)
+
+    df_pattern_source_data = pd.json_normalize(
+        data=source_data_results
+    )
+    return df_pattern_source_data
+
+
+def get_pattern_data(auth_info: dict, data: dict) -> list:
     """
     Pull pattern related data for specific pattern ids included in data input
     :param auth_info: auth for ravelry API
@@ -124,84 +123,48 @@ def get_pattern_data(auth_info: dict, data: dict) -> dict:
     ).get('patterns')
 
     pattern_data = []
-    pattern_needles = []
-    pattern_yarn = []
-    pattern_categories = []
-    pattern_attributes = []
-    pattern_photos = []
 
     for pattern_id, data in pattern_details.items():
-        pattern = pattern_details.get(pattern_id)
+        data.update({'pattern_id': pattern_id})
+        pattern_data.append(data)
 
-        df_pattern = pd.json_normalize(pattern)
-        df_pattern = df_pattern.rename(columns={'id': 'pattern_id'})
-        df_pattern = df_pattern.drop([
-            'pattern_needle_sizes',
-            'packs',
-            'printings',
-            'pattern_categories',
-            'pattern_attributes',
-            'photos',
-            'pattern_author.users'
-        ], axis=1)
+    return pattern_data
 
-        pattern_data.append(df_pattern)
 
-        # Needled info for pattern
-        df_pattern_needles = ravelry_playground.basic_json_normalize(
-            pattern,
-            'pattern_needle_sizes',
-            pattern_id,
-            'pattern_needle_id'
-        )
-        pattern_needles.append(df_pattern_needles)
+def clean_pattern_details_data(pattern_details_data: list) -> pd.DataFrame:
+    df_pattern_details_data = pd.json_normalize(
+        data=pattern_details_data
+    )
 
-        # Yarn info for pattern
-        df_pattern_yarn = ravelry_playground.basic_json_normalize(
-            pattern,
-            'packs',
-            pattern_id,
-            'pattern_yarn_id'
-        )
-        pattern_yarn.append(df_pattern_yarn)
+    df_pattern_details_data = df_pattern_details_data.drop([
+        'pattern_needle_sizes',
+        'packs',
+        'printings',
+        'pattern_categories',
+        'pattern_attributes',
+        'photos',
+        'pattern_author.users'
+    ], axis=1)
 
-        # Category mapping for pattern
-        df_pattern_categories = ravelry_playground.basic_json_normalize(
-            pattern,
-            'pattern_categories',
-            pattern_id,
-            'top_category_id'
-        )
-        pattern_categories.append(df_pattern_categories)
+    # Rename columns in data to match needs for BigQuery (remove '.' character)
+    df_pattern_details_data = ravelry_playground.clean_column_names(
+        df_pattern_details_data)
 
-        # Pattern attributes
-        df_pattern_attributes = ravelry_playground.basic_json_normalize(
-            pattern,
-            'pattern_attributes',
-            pattern_id,
-            'pattern_attribute_id'
-        )
-        pattern_attributes.append(df_pattern_attributes)
+    return df_pattern_details_data
 
-        # Photos data
-        df_photos = ravelry_playground.basic_json_normalize(
-            pattern,
-            'photos',
-            pattern_id,
-            'pattern_photo_id'
-        )
-        pattern_photos.append(df_photos)
 
-    results = {
-        'df_pattern_data': pd.concat(pattern_data),
-        'df_pattern_needles': pd.concat(pattern_needles),
-        'df_pattern_yarn': pd.concat(pattern_yarn),
-        'df_pattern_categories': pd.concat(pattern_categories),
-        'df_pattern_attributes': pd.concat(pattern_attributes),
-        'df_pattern_photos': pd.concat(pattern_photos),
-    }
+def get_nested_pattern_details_data(pattern_details: list, nested_info: str):
+    # Needle info for pattern
+    nested_data = []
+    for pattern in pattern_details:
+        pattern_id = pattern.get('pattern_id')
+        pattern_nested_info = pattern.get(nested_info)
+        for item in pattern_nested_info:
+            item.update({'pattern_id': pattern_id})
+            item[f'{nested_info}_id'] = item.pop('id')
+            nested_data.append(item)
 
-    return results
+    return nested_data
 
 
 def get_pattern_project_data(auth_info: dict, pattern_id: int, data: dict):

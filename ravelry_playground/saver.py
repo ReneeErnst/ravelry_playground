@@ -1,6 +1,45 @@
 import os
 
 import pandas as pd
+import pandas_gbq
+
+
+def create_save_info(
+        save_loc: str
+) -> dict:
+    """
+    Get info on where to save data. Set path to appropriate files depending on
+    if running locally or remotely in GCP
+    :param save_loc: str indicating where output should be saved
+    :return: dict with save info
+    """
+    save_info = {}
+    save_info.update({'save_loc': save_loc})
+
+    local_save_path = os.path.join(
+        '..',
+        'output_data'
+    )
+    save_info.update({'local_save_path': local_save_path})
+
+    save_files = {
+        'project': 'project.txt',
+        'bucket': 'bucket.txt',
+        'dataset': 'dataset.txt'
+    }
+
+    for save_name, save_file in save_files.items():
+        path = os.path.join(
+            os.path.dirname(__file__),
+            save_file
+        )
+
+        if os.path.exists(path):
+            with open(path) as f:
+                save_item = f.read().strip()
+                save_info.update({save_name: save_item})
+
+    return save_info
 
 
 def _save_gcp(
@@ -16,6 +55,8 @@ def _save_gcp(
     :param exists_behavior: What to do if table exists - default replace
     :return: True if save completed
     """
+    pandas_gbq.context.project = save_info.get('project')
+
     # save data to gcp
     df.to_gbq(
         f'{save_info.get("dataset")}.{table_name}',
@@ -45,30 +86,31 @@ def _save_local(df, save_info: dict, save_name: str):
     return True
 
 
-def save_data(data_to_save: dict, save_info: dict):
+def save_data(df_save: pd.DataFrame, table_name: str, save_info: dict):
     """
     For each item in data to save, save data based on info in save_info
-    :param data_to_save: dict of dataframes to save to gcp or locally
+    :param df_save: dataframe to save to gcp or locally
+    :param table_name: Name of table or file to save to
     :param save_info: Dict with info on where to save data to, including
     location locally or in GCP
     :return: True if function completes w/o error
     """
-    for data_name, data in data_to_save.items():
-        if save_info.get('save_loc') == 'gcp':
-            _save_gcp(
-                data,
-                save_info,
-                data_name
-            )
-            print(f'{data_name} saved to GCP!')
-        elif save_info.get('save_loc') == 'local':
-            _save_local(
-                data,
-                save_info,
-                data_name
-            )
-            print(f'{data_name} saved locally!')
-        else:
-            print(f'No save location info included - not saving {data_name}')
+
+    if save_info.get('save_loc') == 'gcp':
+        _save_gcp(
+            df_save,
+            save_info,
+            table_name
+        )
+        print(f'{table_name} saved to GCP!')
+    elif save_info.get('save_loc') == 'local':
+        _save_local(
+            df_save,
+            save_info,
+            table_name
+        )
+        print(f'{table_name} saved locally!')
+    else:
+        print(f'No save location info included - not saving {table_name}')
 
     return True
