@@ -1,6 +1,40 @@
 """Pull data from Ravelry"""
+import os
+
 import pandas as pd
 import requests
+
+
+def create_auth_info(
+        auth_type: str
+) -> dict:
+    """
+    Create authentication info. Set path to appropriate files depending on
+    if running locally or remotely in GCP.
+    :param auth_type: str indicating what type of auth is being used
+    :return: dict with authentication info
+    """
+    auth_info = {}
+    auth_info.update({'auth_type': auth_type})
+
+    auth_files = {
+        'user': 'user.txt',
+        'pwd': 'pwd.txt',
+        'token': 'token.txt'
+    }
+
+    for auth_name, auth_file in auth_files.items():
+        path = os.path.join(
+            os.path.dirname(__file__),
+            auth_file
+        )
+
+        if os.path.exists(path):
+            with open(path) as f:
+                auth_item = f.read().strip()
+                auth_info.update({auth_name: auth_item})
+
+    return auth_info
 
 
 def serialized_list(source: list, delimiter: str) -> str:
@@ -64,28 +98,3 @@ def ravelry_get_data(
         raise RuntimeError(f'Error status: {result.status_code}')
     else:
         return result.json()
-
-
-def basic_json_normalize(
-        data: dict,
-        record_path: str,
-        create_id: str,
-        override_id: str
-):
-    """
-    Convert JSON data nested 1 level deep to pd.DataFrame
-    :param data: data to use for df
-    :param record_path: path in data to where records wanted are
-    :param create_id: id to create in data
-    :param override_id: id to rename
-    :return: pd.DataFrame with needed data
-    """
-    df = pd.json_normalize(
-        data=data,
-        record_path=record_path
-    )
-    df[create_id] = create_id
-    df = df.rename(
-        columns={'id': override_id})
-
-    return df

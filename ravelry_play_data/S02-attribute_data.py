@@ -1,6 +1,4 @@
 # Pull Color and Yarn attributes data
-import os
-
 import cauldron as cd
 
 import ravelry_playground

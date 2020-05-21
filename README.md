@@ -247,6 +247,7 @@ container with command line control:
 `python start_container.py --container command_line`
 
 ## Connect Cauldron container on PC to remote container for execution
+COMING SOON
 
 # General notes/tips: 
 
@@ -256,12 +257,66 @@ import json
 print(json.dumps(patterns[0], indent=2))
 ```
 
-### GCP Authentication when running from local machine rather than in GCP
-If saving data out to GCP like is being done in this repo, you will first 
-need to authenticate to GCP from your computer if you haven't already. If you 
-are running your code from a container, you will need to do this within 
-your container. The following steps assume you are doing this within a 
-container, but can be used for auth generally. 
+### Remote execution into GCP instance (execution in GCP rather than locally)
+If you are wanting to edit your code locally, but have the code execute in
+GCP (using GCP resources), you can follow the below steps for Cauldron. 
+I have another repo which includes instructions for other types of 
+remote execution as well, including using Jupyter and via JetBrains 
+products such as PyCharm here:
+
+https://github.com/ReneeErnst/end-to-end-model-test-gcp
+
+Connecting Cauldron to compute instance in GCP:
+- Start your instance in GCP (I'm using an AI Platform Notebook Instance)
+    - I did this via the console, but you can also do this via 
+      gcloud commands
+    - If you are using an AI Platform Notebook instance I suggest 
+      installing your packages using the built in Jupyter Notebook 
+      functionality.
+        - Once the instance starts in the console, select OPEN JUPYTER LAB
+        - Clone the repo 
+        - Open a terminal in Jupyter lab and `pip3 install -r requirements.txt`
+- SSH into that running instance - note that if you don't indicate a zone 
+  one will be picked for you in whatever region you specified for the 
+  instance. 
+    ```
+    gcloud compute ssh <instance-name>
+      --project <project-id>
+      --zone <zone>
+      -- 
+      -L 5010:localhost:5010 
+    ```
+- A putty window will open if you are on windows (I haven't tried this 
+  on a different OS, but instructions should be similar). Any commands 
+  you run in this window will execute in your instance. Note that the 
+  default python version (as of today's date) is 2.7, make sure that you 
+  specify python3 and pip3 for those commands
+- Start a Cauldron Kernel in the PuTTY instance:
+
+    `cauldron kernel --port=5010`
+    
+- In your command line tool of choice, launch cauldron on your 
+  machine connecting to that now open port:
+    
+    `cauldron ui --connect=127.0.0.1:5010`
+    
+- Cauldron will now open in your browser and you are ready to go!
+    - Note: If you have troubles I recommend using Chrome
+
+### GCP authentication when Running Locally but Saving to GCP
+If interacting with Google Cloud Platform for anything other than saving data 
+to BigQuery via pandas-gbq, you will need to follow the below authentication 
+steps. 
+
+If only using pandas-gbq, you will get instructions on 
+authenticating the first time you run it. Go to the terminal where you 
+kicked off Cauldron for when that happens as you will need to go to 
+the url provided and then enter the credentials info. 
+
+For all other authentication needs, you will need to authenticate to GCP. 
+If you are running your code in a local container, this will need to be 
+done from inside the container. The following steps assume you are doing 
+this within a container, but can be used for auth generally. 
 
 If you started the container to immediately run cauldron, you need to exec into 
 that running container and auth to GCP:

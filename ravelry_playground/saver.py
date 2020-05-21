@@ -1,6 +1,45 @@
 import os
 
 import pandas as pd
+import pandas_gbq
+
+
+def create_save_info(
+        save_loc: str
+) -> dict:
+    """
+    Get info on where to save data. Set path to appropriate files depending on
+    if running locally or remotely in GCP
+    :param save_loc: str indicating where output should be saved
+    :return: dict with save info
+    """
+    save_info = {}
+    save_info.update({'save_loc': save_loc})
+
+    local_save_path = os.path.join(
+        '..',
+        'output_data'
+    )
+    save_info.update({'local_save_path': local_save_path})
+
+    save_files = {
+        'project': 'project.txt',
+        'bucket': 'bucket.txt',
+        'dataset': 'dataset.txt'
+    }
+
+    for save_name, save_file in save_files.items():
+        path = os.path.join(
+            os.path.dirname(__file__),
+            save_file
+        )
+
+        if os.path.exists(path):
+            with open(path) as f:
+                save_item = f.read().strip()
+                save_info.update({save_name: save_item})
+
+    return save_info
 
 
 def _save_gcp(
@@ -16,6 +55,8 @@ def _save_gcp(
     :param exists_behavior: What to do if table exists - default replace
     :return: True if save completed
     """
+    pandas_gbq.context.project = save_info.get('project')
+
     # save data to gcp
     df.to_gbq(
         f'{save_info.get("dataset")}.{table_name}',
