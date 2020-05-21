@@ -1,3 +1,6 @@
+import datetime as dt
+import time
+
 import cauldron as cd
 import pandas as pd
 from google.cloud import bigquery
@@ -34,10 +37,13 @@ nested_data_types = {
     'photos': []
 }
 
+# Track start time of data pull
+start_time = time.monotonic()
+
 # ToDo: Format free text fields describing patterns
 # ToDo: Test different Chunk Sizes
 chunk_tracker = 0  # Track what chunk we are on
-chunk_size = 500  # How many records to pull at once
+chunk_size = 200  # How many records to pull at once
 num_chunks = round(len(pattern_ids) / chunk_size)
 cd.display.text(f'Number of Chunks to Pull: {num_chunks}')
 for patterns in range(0, len(pattern_ids), chunk_size):
@@ -62,6 +68,11 @@ for patterns in range(0, len(pattern_ids), chunk_size):
     # Display done with page every 10 pages
     if chunk_tracker % 10 == 0:
         print(f'Done with chunk {chunk_tracker}')
+
+# Output how long data pull took:
+end_time = time.monotonic()
+cd.display.header(
+    f'Time to pull data was: {dt.timedelta(seconds=end_time - start_time)}')
 
 df_pattern_details_data = ravelry_playground.clean_pattern_details_data(
     pattern_details_data
