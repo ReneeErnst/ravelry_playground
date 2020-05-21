@@ -57,22 +57,26 @@ for patterns in range(0, len(pattern_ids), chunk_size):
     )
     pattern_details_data += pattern_details
 
+    chunk_tracker += 1
+    # Display done with page every 10 pages
+    if chunk_tracker % 10 == 0:
+        print(f'Done with chunk {chunk_tracker}')
+    # ToDo: For every so many chunks, save data out to files and pull it
+    #  together later once all data is saved. Deal with loss if something
+    #  fails.
+
+# Output how long data pull took:
+end_time = time.monotonic()
+cd.display.header(
+    f'Time to pull data was: {dt.timedelta(seconds=end_time - start_time)}')
+
+for pattern_details in pattern_details_data:
     for nested_data_type, output in nested_data_types.items():
         nested_data = ravelry_playground.get_nested_pattern_details_data(
             pattern_details,
             nested_data_type
         )
         output += nested_data
-
-    chunk_tracker += 1
-    # Display done with page every 10 pages
-    if chunk_tracker % 10 == 0:
-        print(f'Done with chunk {chunk_tracker}')
-
-# Output how long data pull took:
-end_time = time.monotonic()
-cd.display.header(
-    f'Time to pull data was: {dt.timedelta(seconds=end_time - start_time)}')
 
 df_pattern_details_data = ravelry_playground.clean_pattern_details_data(
     pattern_details_data
