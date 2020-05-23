@@ -24,4 +24,5 @@ cd.display.header('Yarn Attributes Data: ', level=2)
 cd.display.table(df_yarn_attributes)
 
 # Save data out - save_info data indicates location to save
-ravelry_playground.save_data(data_to_save, save_info)
+for name, data in data_to_save.items():
+    ravelry_playground.save_table(data, name, save_info)

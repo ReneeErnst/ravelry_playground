@@ -1,7 +1,9 @@
+import json
 import os
 
 import pandas as pd
 import pandas_gbq
+from google.cloud import storage
 
 
 def create_save_info(
@@ -21,6 +23,11 @@ def create_save_info(
         'output_data'
     )
     save_info.update({'local_save_path': local_save_path})
+
+    # Create local save folder if running locally and it does not exist
+    if save_loc == 'local':
+        if not os.path.exists(local_save_path):
+            os.makedirs(local_save_path)
 
     save_files = {
         'project': 'project.txt',
@@ -42,7 +49,7 @@ def create_save_info(
     return save_info
 
 
-def _save_gcp(
+def _save_gbq(
         df: pd.DataFrame,
         save_info: dict,
         table_name: str,
@@ -86,7 +93,7 @@ def _save_local(df, save_info: dict, save_name: str):
     return True
 
 
-def save_data(df_save: pd.DataFrame, table_name: str, save_info: dict):
+def save_table(df_save: pd.DataFrame, table_name: str, save_info: dict):
     """
     For each item in data to save, save data based on info in save_info
     :param df_save: dataframe to save to gcp or locally
@@ -97,7 +104,7 @@ def save_data(df_save: pd.DataFrame, table_name: str, save_info: dict):
     """
 
     if save_info.get('save_loc') == 'gcp':
-        _save_gcp(
+        _save_gbq(
             df_save,
             save_info,
             table_name
@@ -114,3 +121,27 @@ def save_data(df_save: pd.DataFrame, table_name: str, save_info: dict):
         print(f'No save location info included - not saving {table_name}')
 
     return True
+
+
+def save_rav_files(
+        save_loc: str,
+        file_name: str,
+        json_data: list,
+        local_save_path: str = None,
+        bucket_name: str = None,
+        bucket_path: str = None,
+        client: storage.client = None
+):
+    if save_loc == 'local':
+        with open(os.path.join(local_save_path, file_name), 'w') as f:
+            json.dump(json_data, f)
+    else:
+        # write file to container then save to bucket
+        with open(file_name, 'w') as f:
+            json.dump(json_data, f)
+
+        bucket = client.bucket(bucket_name)
+
+        blob = bucket.blob(
+            f'{bucket_path}/{file_name}')
+        blob.upload_from_filename(file_name)
