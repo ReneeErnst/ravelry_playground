@@ -13,19 +13,14 @@ def parse():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--container')
-    parser.add_argument('--remote', action='store_true')
 
     return parser.parse_args()
 
 
-def run_cauldron(remote=True):
+def run_cauldron():
     """Start ravelry playground container running Cauldron"""
 
     current_directory = os.path.realpath(os.curdir)
-    if remote:
-        entry = '--entrypoint=/bin/bash'
-    else:
-        entry = ''
 
     cmd = [
         'docker', 'run',
@@ -33,7 +28,6 @@ def run_cauldron(remote=True):
         '--workdir=/project',
         f'--volume={current_directory}:/project',
         '-p=5010:8000',
-        entry,
         ENV_IMAGE_NAME
     ]
 
@@ -70,7 +64,7 @@ def main():
     """
     args = parse()
     if args.container == 'cauldron':
-        return run_cauldron(remote=args.remote)
+        return run_cauldron()
     elif args.action == 'command_line':
         return run_command_line()
     raise ValueError(f'Unknown action "{args.container}"')

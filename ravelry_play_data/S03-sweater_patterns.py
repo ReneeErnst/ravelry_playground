@@ -37,6 +37,7 @@ for option_name, options in availability_search_option.items():
     results_stats = ravelry_playground.get_num_pattern_search_results(
         auth_info,
         page_size=1000,
+        sort='name',
         pc='sweater',
         availability=options
     )
@@ -53,7 +54,6 @@ for option_name, options in availability_search_option.items():
     # Add 1 to num results pages to handle python going up to, but not
     # including, last number
     pages = range(1, (num_results_pages + 1))
-    # pages = range(1, 4)
 
     for page in pages:
         patterns = ravelry_playground.pattern_search(
@@ -125,4 +125,4 @@ data_to_save = {
 
 for table_name, df in data_to_save.items():
     # Save data out - save_info includes all needed info on where/how to save
-    ravelry_playground.save_data(df, table_name, save_info)
+    ravelry_playground.save_table(df, table_name, save_info)

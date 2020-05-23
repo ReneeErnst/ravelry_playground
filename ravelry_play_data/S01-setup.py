@@ -3,7 +3,7 @@ import cauldron as cd
 import ravelry_playground
 
 # Config - Set your chosen auth type and save loc here
-auth_type = 'oauth'  # Set to basic or oauth
+auth_type = 'basic'  # Set to basic or oauth
 save_loc = 'gcp'  # Set to gcp or local, or adjust code for another location
 run_loc = 'gcp'  # set to gcp or local, or adjust code for another location
 

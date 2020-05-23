@@ -13,5 +13,7 @@ from ravelry_playground.patterner import clean_pattern_search_results  # noqa
 from ravelry_playground.patterner import create_pattern_source_data  # noqa
 from ravelry_playground.patterner import clean_pattern_details_data  # noqa
 from ravelry_playground.patterner import get_nested_pattern_details_data  # noqa
-from ravelry_playground.saver import save_data  # noqa
+from ravelry_playground.patterner import previous_pattern_details_pulls  # noqa
+from ravelry_playground.saver import save_table  # noqa
 from ravelry_playground.saver import create_save_info  # noqa
+from ravelry_playground.saver import save_rav_files  # noqa
