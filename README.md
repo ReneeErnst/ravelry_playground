@@ -21,6 +21,12 @@ data from the Ravelry API. I'm now working on building this out to pull enough
 data for Data Science modeling. Below I've included information on how to 
 get set up to use the Ravelry API, including different authentication methods. 
 
+**Note:** This code has become quite detailed as I've dealt with 
+complexities around pulling significant chunks of data rather than one 
+off requests. In a later update I'll add a notebook for the more
+simple/one off requests, in addition to the more complex code for handling 
+larger data pulls. 
+
 #### Cauldron Notebooks
 This code is utilizing Cauldron Notebooks. Cauldron Notebooks are similar to 
 Jupyter Notebooks, except that what would normally be a cell in Jupyter 
