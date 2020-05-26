@@ -64,12 +64,17 @@ def _save_gbq(
     """
     pandas_gbq.context.project = save_info.get('project')
 
-    # save data to gcp
-    df.to_gbq(
-        f'{save_info.get("dataset")}.{table_name}',
-        save_info.get('project'),
-        if_exists=exists_behavior
-    )
+    try:
+        # save data to gcp
+        df.to_gbq(
+            f'{save_info.get("dataset")}.{table_name}',
+            save_info.get('project'),
+            if_exists=exists_behavior
+        )
+    except Exception as error:
+        print(error)
+        df.info()
+        raise error
     return True
 
 

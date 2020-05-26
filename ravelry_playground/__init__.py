@@ -5,6 +5,7 @@ from ravelry_playground.puller import ravelry_get_data  # noqa
 from ravelry_playground.puller import serialized_list  # noqa
 from ravelry_playground.puller import clean_column_names  # noqa
 from ravelry_playground.puller import create_auth_info  # noqa
+from ravelry_playground.puller import get_blobs_in_gcs_loc  # noqa
 from ravelry_playground.patterner import pattern_search  # noqa
 from ravelry_playground.patterner import get_pattern_data  # noqa
 from ravelry_playground.patterner import get_pattern_project_data  # noqa
@@ -13,7 +14,7 @@ from ravelry_playground.patterner import clean_pattern_search_results  # noqa
 from ravelry_playground.patterner import create_pattern_source_data  # noqa
 from ravelry_playground.patterner import clean_pattern_details_data  # noqa
 from ravelry_playground.patterner import get_nested_pattern_details_data  # noqa
-from ravelry_playground.patterner import previous_pattern_details_pulls  # noqa
+from ravelry_playground.patterner import saved_pattern_details_pulls  # noqa
 from ravelry_playground.saver import save_table  # noqa
 from ravelry_playground.saver import create_save_info  # noqa
 from ravelry_playground.saver import save_rav_files  # noqa

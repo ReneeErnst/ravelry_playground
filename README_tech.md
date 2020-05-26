@@ -228,6 +228,7 @@ Connecting Cauldron to compute instance in GCP:
 - SSH into that running instance - note that if you don't indicate a zone 
   one will be picked for you in whatever region you specified for the 
   instance. 
+  
     ```
     gcloud compute ssh <instance-name>
       --project <project-id>
