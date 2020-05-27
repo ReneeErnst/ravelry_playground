@@ -19,6 +19,7 @@ save_loc = save_info.get('save_loc')
 project = save_info.get('project')
 dataset = save_info.get('dataset')
 
+# ToDo: Update this with logic on what to do if running via local option
 # noinspection SqlNoDataSourceInspection
 query = f"""
     SELECT pattern_id
@@ -73,7 +74,6 @@ if previously_complete.get('max_complete_chunk') > 0:
 # Track start time of data pull
 start_time = time.monotonic()
 
-# ToDo: Format free text fields describing patterns
 chunk_tracker = 0 + max_complete_chunk  # Track what chunk we are on
 chunk_size = 200  # How many records to pull at once
 total_chunks = round(original_num_patterns / chunk_size)
