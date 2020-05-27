@@ -94,11 +94,13 @@ end_time = time.monotonic()
 cd.display.header(
     f'Time to pull data was: {dt.timedelta(seconds=end_time - start_time)}')
 
+# Create dataframe with results and formatted column names
 df_sweater_patterns = ravelry_playground.clean_pattern_search_results(
     pattern_results
 )
 df_sweater_patterns = df_sweater_patterns.drop_duplicates()
 
+# Get pattern source data from pattern_results
 df_patterns_source_data = ravelry_playground.create_pattern_source_data(
     pattern_results
 )
@@ -117,12 +119,13 @@ cd.display.table(df_patterns_source_data.head())
 cd.display.text(
     f'Length of patterns source data: {len(df_patterns_source_data)}')
 
-# Data to save includes the table or file name as the key the data as the value
-data_to_save = {
-    'sweater_pattern_data': df_sweater_patterns,
-    'sweater_pattern_sources': df_patterns_source_data
-}
-
-for table_name, df in data_to_save.items():
-    # Save data out - save_info includes all needed info on where/how to save
-    ravelry_playground.save_table(df, table_name, save_info)
+ravelry_playground.save_table(
+    df_sweater_patterns,
+    'sweater_pattern_data',
+    save_info
+)
+ravelry_playground.save_table(
+    df_patterns_source_data,
+    'sweater_pattern_sources',
+    save_info
+)

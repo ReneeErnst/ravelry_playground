@@ -78,26 +78,6 @@ def _save_gbq(
     return True
 
 
-def _save_local(df, save_info: dict, save_name: str):
-    """
-    Save hdf file to local system
-    :param df: pandas dataframe to save
-    :param save_info: dict with info on save related info
-    :param save_name:
-    :return:
-    """
-    df.to_hdf(
-        os.path.join(
-            save_info.get('local_save_path'),
-            f'{save_name}.hdf'
-        ),
-        f'df_{save_name}',
-        format='table',
-        mode='w'
-    )
-    return True
-
-
 def save_table(df_save: pd.DataFrame, table_name: str, save_info: dict):
     """
     For each item in data to save, save data based on info in save_info
@@ -116,10 +96,14 @@ def save_table(df_save: pd.DataFrame, table_name: str, save_info: dict):
         )
         print(f'{table_name} saved to GCP!')
     elif save_info.get('save_loc') == 'local':
-        _save_local(
-            df_save,
-            save_info,
-            table_name
+        df_save.to_hdf(
+            os.path.join(
+                save_info.get('local_save_path'),
+                f'{table_name}.hdf'
+            ),
+            f'df_{table_name}',
+            format='table',
+            mode='w'
         )
         print(f'{table_name} saved locally!')
     else:

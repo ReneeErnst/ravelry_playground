@@ -4,6 +4,8 @@ import ravelry_playground
 
 auth_info = cd.shared.auth_info
 
+# ToDo: Use this to eventually get yarn info from projects
+
 # ToDo: Get IDs first
 ids = [26, 27]
 data = {
