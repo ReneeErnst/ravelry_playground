@@ -16,10 +16,28 @@ making, find the perfect pattern and connect with people who love to play
 with yarn from all over the world in our forums."
 
 ## Intro
-To start this project I've built a few functions that can be used for pulling 
-data from the Ravelry API. I'm now working on building this out to pull enough 
-data for Data Science modeling. Please see the README_tech.md file for more
-detailed technical information, including info on hw to use the Ravelry API. 
+To start this project I've built functionality for pulling data from the 
+Ravelry API. As of 5/26/2020, the code in the ravelry_play_data Cauldron 
+notebook pulls in the following data (S01 sets up config for the later steps):
+- S02-attribute_data: Basic (minimal) data on possible color and yarn 
+  attributes that are re-used throughout Ravelry
+- S03-sweater_patterns: Pulls all sweater patterns from Ravelry (just 
+  over 100k) patterns. This gets a lot of data and pulls it in chunks 
+  appropriately. 
+- S04-pull_chunks_pattern_details: Pulls the detailed pattern info for all
+  pattern ids obtained in S03. This is an even larger amount of data. Data
+  is saved in chunks (either locally or to GCS). Provides the level of info
+  that should make the modeling ideas below possible, such as number of 
+  projects that use the pattern and pattern reviews. 
+- S05-save_pattern_details_data: Save out the aggregated results from S04
+  either locally or to GCS
+- S06-pattern_projects_details: Sample code for pulling project level data 
+  for given patterns. Currently requires OAuth to run. 
+- S07-yarn_from_projects: Sample code pulling the detailed yarn info for
+  the yarn used in a given project. 
+
+Please see the README_tech.md file for more detailed technical information, 
+including info on how to use the Ravelry API. 
 
 Documentation on the Ravelry API can be found here: 
 
@@ -63,5 +81,5 @@ posts tagging the pattern
 Using the data available, I'd like to start by looking at:
 - What features are most important to determining the number of projects 
   using the pattern?
-- Can well I predict the number of projects a pattern will have based on those 
+- How well I predict the number of projects a pattern will have based on those 
   features?
