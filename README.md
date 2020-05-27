@@ -17,7 +17,7 @@ with yarn from all over the world in our forums."
 
 ## Intro
 To start this project I've built functionality for pulling data from the 
-Ravelry API. As of 5/26/2020, the code in the ravelry_play_data Cauldron 
+Ravelry API. As of 5/26/2020, the code in the sweaters_play_data Cauldron 
 notebook pulls in the following data (S01 sets up config for the later steps):
 - S02-attribute_data: Basic (minimal) data on possible color and yarn 
   attributes that are re-used throughout Ravelry

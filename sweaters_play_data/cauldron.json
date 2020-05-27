@@ -1,10 +1,10 @@
 {
-  "author": "",
-  "id": "ravelry_play_data",
+  "author": "Renee Ernst",
+  "id": "sweaters_play_data",
   "library_folders": [
     ".."
   ],
-  "name": "ravelry_play_data",
+  "name": "sweaters_play_data",
   "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
   "steps": [
     "S01-setup.py",
@@ -15,6 +15,6 @@
     "S06-pattern_projects_details.py",
     "S07-yarn_from_projects.py"
   ],
-  "summary": "",
-  "title": "ravelry_play_data"
+  "summary": "Pull sweaters data from Ravelry API",
+  "title": "sweaters_play_data"
 }
