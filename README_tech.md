@@ -281,16 +281,7 @@ that running container and auth to GCP:
 
 - Once exec'ed into the container, follow these steps: 
     - Authenticate to GCP: 
-    
-        `gcloud auth login`
-
-    - Set default project:
-        
-        `gcloud config set project <project_id>`
-        
-    - Set default compute region (I'm using us-central1):
-    
-        `gcloud config set compute/region <compute_region>`
+        `gcloud auth application-default login`
 
 You should now be set up to interact with GCP from your running container! 
 You can now exit by simply entering 'exit'.

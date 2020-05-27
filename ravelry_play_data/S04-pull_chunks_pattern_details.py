@@ -15,11 +15,10 @@ save_loc = save_info.get('save_loc')
 
 # Get pattern details for sweater patterns pulled in previous step
 
-# ToDo: Doesn't work when using a local running container - need to figure
-#  out auth to GCP for that
 # Get pattern ids
 project = save_info.get('project')
 dataset = save_info.get('dataset')
+
 # noinspection SqlNoDataSourceInspection
 query = f"""
     SELECT pattern_id
