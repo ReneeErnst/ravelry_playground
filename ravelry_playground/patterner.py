@@ -146,7 +146,9 @@ def clean_pattern_details_data(pattern_details_data: list) -> pd.DataFrame:
         'pattern_categories',
         'pattern_attributes',
         'photos',
-        'pattern_author.users'
+        'pattern_author.users',
+        'notes_html',
+        'pattern_author.notes_html'
     ], axis=1)
 
     # Rename columns in data to match needs for BigQuery (remove '.' character)
@@ -180,7 +182,7 @@ def get_nested_pattern_details_data(
     return nested_data
 
 
-def previous_pattern_details_pulls(
+def saved_pattern_details_pulls(
         save_loc: str,
         pattern_ids: list,
         local_save_path: str = None,
@@ -206,14 +208,12 @@ def previous_pattern_details_pulls(
                 os.path.join(local_save_path, f))
         ]
     else:
-        results_file_names = []
         bucket = client.bucket(bucket_name)
-        blobs = list(bucket.list_blobs(prefix=bucket_path))
-        for blob in blobs:
-            object_name = blob.name
-            if object_name != bucket_path:
-                object_name = object_name.replace(bucket_path, '')
-                results_file_names.append(object_name)
+        results_file_names = [
+            blob.name.replace(bucket_path, '')
+            for blob in bucket.list_blobs(prefix=bucket_path)
+            if blob.name != bucket_path
+        ]
 
     if len(results_file_names) == 0:
         max_complete_chunk = 0

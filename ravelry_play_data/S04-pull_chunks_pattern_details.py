@@ -12,22 +12,14 @@ auth_info = cd.shared.auth_info
 save_info = cd.shared.save_info
 
 save_loc = save_info.get('save_loc')
-project = save_info.get('project')
-dataset = save_info.get('dataset')
-bucket = save_info.get('bucket')
-
-# where to save data locally or in bucket
-local_save_path = os.path.join(
-    save_info.get('local_save_path'),
-    'pattern_details'
-)
-bucket_path = 'data/pattern_details'
 
 # Get pattern details for sweater patterns pulled in previous step
 
-# ToDo: Doesn't work when using a local running container - need to figure
-#  out auth to GCP for that
 # Get pattern ids
+project = save_info.get('project')
+dataset = save_info.get('dataset')
+
+# ToDo: Update this with logic on what to do if running via local option
 # noinspection SqlNoDataSourceInspection
 query = f"""
     SELECT pattern_id
@@ -49,20 +41,24 @@ original_num_patterns = len(pattern_ids)
 if save_loc == 'local':
     # If running locally, create directory for saving file chunks if it
     # doesn't exist
+    local_save_path = os.path.join(
+        save_info.get('local_save_path'),
+        'pattern_details'
+    )
     if not os.path.exists(local_save_path):
         os.makedirs(local_save_path)
 
-    previously_complete = ravelry_playground.previous_pattern_details_pulls(
+    previously_complete = ravelry_playground.saved_pattern_details_pulls(
         save_loc,
         pattern_ids,
         local_save_path=local_save_path
     )
 else:
-    previously_complete = ravelry_playground.previous_pattern_details_pulls(
+    previously_complete = ravelry_playground.saved_pattern_details_pulls(
         save_loc,
         pattern_ids,
-        bucket_name=bucket,
-        bucket_path=f'{bucket_path}/',
+        bucket_name=save_info.get('bucket'),
+        bucket_path='data/pattern_details/',
         client=storage.Client()
     )
 
@@ -78,7 +74,6 @@ if previously_complete.get('max_complete_chunk') > 0:
 # Track start time of data pull
 start_time = time.monotonic()
 
-# ToDo: Format free text fields describing patterns
 chunk_tracker = 0 + max_complete_chunk  # Track what chunk we are on
 chunk_size = 200  # How many records to pull at once
 total_chunks = round(original_num_patterns / chunk_size)
@@ -110,9 +105,13 @@ for patterns in range(0, len(pattern_ids), chunk_size):
     # After 100, stop and save the data out.
     if chunk_tracker % 100 == 0 or chunk_tracker == total_chunks:
         if save_loc == 'local':
+            local_save_path = os.path.join(
+                save_info.get('local_save_path'),
+                'pattern_details'
+            )
             ravelry_playground.save_rav_files(
                 save_loc,
-                f'{chunk_tracker}_pattern_details',
+                f'{chunk_tracker}_pattern_details.txt',
                 pattern_details_data,
                 local_save_path=local_save_path
             )
@@ -121,8 +120,8 @@ for patterns in range(0, len(pattern_ids), chunk_size):
                 save_loc,
                 f'{chunk_tracker}_pattern_details',
                 pattern_details_data,
-                bucket_name=bucket,
-                bucket_path=bucket_path,
+                bucket_name=save_info.get('bucket'),
+                bucket_path='data/pattern_details',
                 client=storage.Client()
             )
         cd.display.text('Chunks Saved')

@@ -1,8 +1,10 @@
 """Pull data from Ravelry"""
+import json
 import os
 
 import pandas as pd
 import requests
+from google.cloud import storage
 
 
 def create_auth_info(
@@ -102,3 +104,35 @@ def ravelry_get_data(
         raise RuntimeError(f'Error status: {result.status_code}')
     else:
         return result.json()
+
+
+def get_blobs_in_gcs_loc(
+        client: storage.Client,
+        bucket_name: str,
+        bucket_path: str
+):
+    """
+    Downloads a blob from given bucket
+    :param client: gcs client
+    :param bucket_name: gcs bucket name
+    :param bucket_path: name of object in bucket
+    :return: results with list of data from blobs
+    """
+    bucket = client.bucket(bucket_name)
+    # Get name of results files in bucket location
+    blob_names = [
+        blob.name
+        for blob in bucket.list_blobs(prefix=bucket_path)
+        if blob.name != bucket_path
+    ]
+
+    results = []
+
+    for blob_name in blob_names:
+        blob_contents = (
+            bucket.get_blob(blob_name).download_as_string().decode('utf-8')
+        )
+
+        results += json.loads(blob_contents)
+
+    return results
